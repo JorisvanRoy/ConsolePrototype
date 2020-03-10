@@ -2,19 +2,65 @@
 //
 
 #include <iostream>
+#include "User.h"
 
+void askQuestion();
+void addHours();
+void printHours();
+
+User user;
 int main()
 {
-    std::cout << "Hello World!\n";
+    std::string name;
+    std::cout << "Welcome to the registration prototype! What is your name?" << std::endl;
+    std::cin >> name;
+    
+    user = User(name);
+
+    askQuestion();
+
+
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void askQuestion() {
+    std::cout << "What would you like to do? 1. Add worked hours 2. Show all worked hours" << std::endl;
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    int option;
+
+    std::cin >> option;
+
+    switch (option)
+    {
+    case 1:
+        addHours();
+        break;
+    case 2:
+        printHours();
+        break;
+    default:
+        break;
+    }
+    askQuestion();
+}
+
+void addHours()
+{
+    std::cout << "How many hours have you worked?" << std::endl;
+    int hours;
+    std::cin >> hours;
+
+    user.addHours(hours);
+}
+
+void printHours()
+{
+    std::vector<int> hours = user.getWorkedHours();
+    int totalWorked = 0;
+    for (int time : hours)
+    {
+        totalWorked += time;
+        std::cout << "You have worked " << time << " hours" << std::endl;
+    }
+
+    std::cout << "All those hours combined you have worked " << totalWorked << " hours" << std::endl;
+}
