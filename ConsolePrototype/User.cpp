@@ -9,6 +9,12 @@ User::User(std::string name)
 	this->name = name;
 }
 
+User::User(std::string name, std::vector<int> workedHours)
+{
+	this->name = name;
+	this->workedHours = workedHours;
+}
+
 std::string& User::getName()
 {
 	return name;
@@ -27,4 +33,9 @@ std::vector<int>& User::getWorkedHours()
 void User::addHours(int& hours)
 {
 	workedHours.push_back(hours);
+}
+
+void User::fromJson(const nlohmann::json& j)
+{
+	j[name].get_to<std::vector<int>>(workedHours);
 }

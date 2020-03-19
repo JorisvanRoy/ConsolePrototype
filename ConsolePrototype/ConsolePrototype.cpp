@@ -3,11 +3,19 @@
 
 #include <iostream>
 #include "User.h"
+#include <nlohmann/json.hpp>
+#include <fstream>
 
 void askQuestion();
 void addHours();
 void printHours();
+void loadData();
+void findUser();
+void saveData();
+void changeUser();
 
+std::string filename = "data.json";
+nlohmann::json data;
 User user;
 int main()
 {
@@ -17,13 +25,15 @@ int main()
     
     user = User(name);
 
+    loadData();
+
     askQuestion();
 
 
 }
 
 void askQuestion() {
-    std::cout << "What would you like to do? 1. Add worked hours 2. Show all worked hours" << std::endl;
+    std::cout << "What would you like to do? 1. Add worked hours 2. Show all worked hours 3. Switch user 4. Exit" << std::endl;
 
     int option;
 
@@ -37,6 +47,12 @@ void askQuestion() {
     case 2:
         printHours();
         break;
+    case 3:
+        changeUser();
+        break; 
+    case 4:
+        saveData();
+        return;
     default:
         break;
     }
@@ -63,4 +79,58 @@ void printHours()
     }
 
     std::cout << "All those hours combined you have worked " << totalWorked << " hours" << std::endl;
+}
+
+void loadData()
+{
+    std::fstream file;
+
+    file.open(filename, std::fstream::in | std::fstream::out | std::fstream::app);
+
+    if (!file) {
+        file.open(filename, std::fstream::in | std::fstream::out | std::fstream::trunc);
+        file << "\n";
+        file.close();
+    }
+
+    x = nlohmann::json::parse(file);
+
+    file.close();
+
+    findUser();
+}
+
+void findUser()
+{
+    if (data[user.getName()] != NULL) {
+        //user = User(user.getName(), data[user.getName()].get_to<std::vector<int>>(user.workedHours));
+        user.fromJson(data);
+    }
+
+}
+
+void saveData()
+{
+    data[user.getName()] = user.getWorkedHours();
+
+    std::fstream file;
+
+    file.open(filename, std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+    file.clear();
+
+    file << data;
+
+    file.close();
+
+}
+
+void changeUser()
+{
+    std::cout << "To what name do you want to switch?" << std::endl;
+    std::string name;
+    std::cin >> name;
+
+    user = User(name);
+    findUser();
 }
